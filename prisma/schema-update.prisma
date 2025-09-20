@@ -1,0 +1,113 @@
+// Add these new models to your existing schema.prisma
+
+model Post {
+  id          String   @id @default(cuid())
+  userId      String
+  content     String
+  images      String[]
+  type        String   // "activity", "product", "trip", "facility", "general"
+  location    String?
+  latitude    Float?
+  longitude   Float?
+  tags        String[]
+  venueId     String?
+  sellerId    String?
+  price       Float?
+  currency    String   @default("GBP")
+  isPromoted  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  venue    Venue?    @relation(fields: [venueId], references: [id])
+  seller   Seller?   @relation(fields: [sellerId], references: [id])
+  likes    Like[]
+  comments Comment[]
+  
+  @@map("posts")
+}
+
+model Like {
+  id     String @id @default(cuid())
+  userId String
+  postId String
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, postId])
+  @@map("likes")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  content   String
+  parentId  String?  // For reply threads
+  createdAt DateTime @default(now())
+  
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post     Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies  Comment[] @relation("CommentReplies")
+  
+  @@map("comments")
+}
+
+model ChatThread {
+  id          String   @id @default(cuid())
+  name        String?
+  isGroup     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  participants ThreadParticipant[]
+  messages     ChatMessage[]
+  
+  @@map("chat_threads")
+}
+
+model ThreadParticipant {
+  id       String @id @default(cuid())
+  threadId String
+  userId   String
+  joinedAt DateTime @default(now())
+  
+  thread ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([threadId, userId])
+  @@map("thread_participants")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  threadId  String
+  senderId  String
+  content   String
+  type      String   @default("text") // "text", "image", "location", "activity"
+  metadata  Json?    // For activity shares, location data, etc.
+  createdAt DateTime @default(now())
+  readBy    String[] // Array of user IDs who have read this message
+  
+  thread ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender User       @relation("SentChatMessages", fields: [senderId], references: [id])
+  
+  @@map("chat_messages")
+}
+
+// Add these relations to existing models:
+// User model additions:
+//   posts            Post[]
+//   likes            Like[]
+//   comments         Comment[]
+//   chatThreads      ThreadParticipant[]
+//   sentChatMessages ChatMessage[] @relation("SentChatMessages")
+
+// Venue model additions:
+//   posts Post[]
+
+// Seller model additions:
+//   posts Post[]

@@ -1,0 +1,17 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="96" cy="96" r="96" fill="#3B82F6"/>
+  
+  <!-- White huddle logo -->
+  <circle cx="96" cy="96" r="70" stroke="white" stroke-width="8" fill="none"/>
+  
+  <!-- Three connected dots representing people in a huddle -->
+  <circle cx="96" cy="56" r="12" fill="white"/>
+  <circle cx="66" cy="116" r="12" fill="white"/>
+  <circle cx="126" cy="116" r="12" fill="white"/>
+  
+  <!-- Connection lines -->
+  <line x1="96" y1="68" x2="78" y2="104" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <line x1="96" y1="68" x2="114" y2="104" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <line x1="78" y1="116" x2="114" y2="116" stroke="white" stroke-width="6" stroke-linecap="round"/>
+</svg>
